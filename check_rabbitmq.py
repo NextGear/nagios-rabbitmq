@@ -38,11 +38,14 @@ class RabbitMQ(object):
         if type(response) is dict and response.has_key('reason'):
             print("%(reason)s: %(error)s" % response)
             exit(3)
-        return response
+        try:
+            return response[0]
+        except KeyError:
+            return response
 
     @staticmethod
     def consumers():
-        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)[0]
+        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)
         print("Consumers: %(consumers)d (%(active_consumers)d active)") % queue
         if queue['active_consumers'] <= args['critical']:
             return 2
@@ -51,7 +54,7 @@ class RabbitMQ(object):
 
     @staticmethod
     def queue():
-        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)[0]
+        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)
         print("Messages: %(messages)d (%(messages_ready)d ready, %(messages_unacknowledged)d unacknowledged)" % queue)
         if queue['messages'] >= args['critical']:
             return 2
