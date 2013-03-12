@@ -44,19 +44,19 @@ class RabbitMQ(object):
     def consumers():
         queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)[0]
         print("Consumers: %(consumers)d (%(active_consumers)d active)") % queue
-        if queue['active_consumers'] <= args['warning']:
-            return 1
-        elif queue['active_consumers'] <= args['critical']:
+        if queue['active_consumers'] <= args['critical']:
             return 2
+        elif queue['active_consumers'] <= args['warning']:
+            return 1
 
     @staticmethod
     def queue():
         queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)[0]
         print("Messages: %(messages)d (%(messages_ready)d ready, %(messages_unacknowledged)d unacknowledged)" % queue)
-        if queue['messages'] >= args['warning']:
-            return 1
-        elif queue['messages'] >= args['critical']:
+        if queue['messages'] >= args['critical']:
             return 2
+        elif queue['messages'] >= args['warning']:
+            return 1
 
     @staticmethod
     def vhosts():
@@ -64,10 +64,10 @@ class RabbitMQ(object):
         for vhost in RabbitMQ.get('vhosts'):
             vhosts.append(vhost['name'])
         print("Vhosts: " + ', '.join(vhosts))
-        if len(vhosts) <= args['warning']:
-            return 1
-        elif len(vhosts) <= args['critical']:
+        if len(vhosts) <= args['critical']:
             return 2
+        elif len(vhosts) <= args['warning']:
+            return 1
 
 check = getattr(RabbitMQ, args['check'])
 exit(check())
