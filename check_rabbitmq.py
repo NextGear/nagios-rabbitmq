@@ -35,14 +35,14 @@ class RabbitMQ(object):
         if args['verbose']:
             print("[HTTP %d] %s" % (r.status_code, API + module))
         response = json.loads(r.text)
-        if response.has_key('reason'):
+        if type(response) is dict and response.has_key('reason'):
             print("%(reason)s: %(error)s" % response)
             exit(1)
         return response
 
     @staticmethod
     def consumers():
-        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)
+        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)[0]
         print("Consumers: %(consumers)d (%(active_consumers)d active)") % queue
         if queue['active_consumers'] <= args['warning']:
             return 1
@@ -51,7 +51,7 @@ class RabbitMQ(object):
 
     @staticmethod
     def queue():
-        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)
+        queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)[0]
         print("Messages: %(messages)d (%(messages_ready)d ready, %(messages_unacknowledged)d unacknowledged)" % queue)
         if queue['messages'] >= args['warning']:
             return 1
