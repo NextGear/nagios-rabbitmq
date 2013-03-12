@@ -13,6 +13,9 @@ Commands
 * $ARG5$ - warning level
 * $ARG6$ - critical level
 
+##### check_rabbitmq_alive
+$USER2$/check_rabbitmq.py -H $HOSTADDRESS$ --user=$ARG1$ --pass=$ARG2$ --vhost=$ARG3$ --queue=$ARG4$ --check=alive --warning $ARG5$ --critical $ARG6$
+
 ##### check_rabbitmq_consumers
 $USER2$/check_rabbitmq.py -H $HOSTADDRESS$ --user=$ARG1$ --pass=$ARG2$ --vhost=$ARG3$ --queue=$ARG4$ --check=consumers --warning $ARG5$ --critical $ARG6$
 
