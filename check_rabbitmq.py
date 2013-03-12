@@ -16,8 +16,8 @@ parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help
 parser.add_argument('-V', '--vhost', dest='vhost', metavar='VIRTUAL_HOST', default='/', help="virtual host")
 parser.add_argument('-q', '--queue', dest='queue', required=True, help="virtual host")
 parser.add_argument('-c', '--check', dest='check', default='vhosts', choices=['consumers', 'queue', 'vhosts'], help="what check to run")
-parser.add_argument('-W', '--warning', dest='warning', required=True)
-parser.add_argument('-C', '--critical', dest='critical', required=True)
+parser.add_argument('-W', '--warning', dest='warning', type=int, required=True)
+parser.add_argument('-C', '--critical', dest='critical', type=int, required=True)
 args = vars(parser.parse_args())
 
 API = 'http://%(host)s:%(port)d/api/' % args
@@ -31,13 +31,13 @@ class RabbitMQ(object):
             r = requests.get(API + module, auth=(args['user'], args['pass']))
         except requests.exceptions.ConnectionError:
             print("Could not connect to " + API)
-            exit(2)
+            exit(3)
         if args['verbose']:
             print("[HTTP %d] %s" % (r.status_code, API + module))
         response = json.loads(r.text)
         if type(response) is dict and response.has_key('reason'):
             print("%(reason)s: %(error)s" % response)
-            exit(1)
+            exit(3)
         return response
 
     @staticmethod
