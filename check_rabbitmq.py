@@ -27,10 +27,18 @@ class RabbitMQ(object):
 
     @staticmethod
     def get(module):
-        r = requests.get(API + module, auth=(args['user'], args['pass']))
+        try:
+            r = requests.get(API + module, auth=(args['user'], args['pass']))
+        except requests.exceptions.ConnectionError:
+            print("Could not connect to " + API)
+            exit(2)
         if args['verbose']:
             print("[HTTP %d] %s" % (r.status_code, API + module))
-        return json.loads(r.text)
+        response = json.loads(r.text)
+        if response.has_key('reason'):
+            print("%(reason)s: %(error)s" % response)
+            exit(1)
+        return response
 
     @staticmethod
     def consumers():
