@@ -53,10 +53,12 @@ class RabbitMQ(object):
     @staticmethod
     def consumers():
         queue = RabbitMQ.get('queues/%(vhost)s/%(queue)s' % args)
+        if not queue.has_key('active_consumers'):
+            queue['active_consumers'] = 0
         print("Consumers: %(consumers)d (%(active_consumers)d active)") % queue
-        if queue['active_consumers'] <= args['critical']:
+        if queue['consumers'] <= args['critical']:
             return 2
-        elif queue['active_consumers'] <= args['warning']:
+        elif queue['consumers'] <= args['warning']:
             return 1
 
     @staticmethod
